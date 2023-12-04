@@ -1,0 +1,117 @@
+openapi: 3.1.0
+info:
+  title: Federated learning agent API
+  description: Federated learning agent.
+  version: 0.1.0
+paths:
+  /train-model:
+    put:
+      tags:
+      - Models
+      summary: Train Model
+      operationId: train_model_train_model_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FLModel'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Train Model Train Model Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      tags:
+      - healthcheck
+      summary: Perform a Health Check
+      operationId: get_health_health_get
+      responses:
+        '200':
+          description: Return HTTP Status Code 200 (OK)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+components:
+  schemas:
+    FLModel:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          $ref: '#/components/schemas/ModelType'
+        param:
+          type: string
+          title: Param
+        minimumAgents:
+          type: integer
+          title: Minimumagents
+      type: object
+      required:
+      - name
+      - type
+      - param
+      - minimumAgents
+      title: FLModel
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HealthCheck:
+      properties:
+        status:
+          type: string
+          title: Status
+          default: OK
+        is_training_model:
+          type: boolean
+          title: Is Training Model
+          default: false
+      type: object
+      title: HealthCheck
+      description: Response model to validate and return when performing a health
+        check.
+    ModelType:
+      type: string
+      enum:
+      - DPLSTM
+      - FF
+      title: ModelType
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

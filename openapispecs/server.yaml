@@ -1,0 +1,186 @@
+openapi: 3.1.0
+info:
+  title: Federated learning server API
+  description: Federated learning server, the component that orchestrate and coordinate
+    agents.
+  version: 0.1.0
+paths:
+  /agents:
+    get:
+      tags:
+      - Agents
+      summary: Get All Agents
+      operationId: get_all_agents_agents_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      tags:
+      - Agents
+      summary: Register Agent
+      operationId: register_agent_agents_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /train-model:
+    put:
+      tags:
+      - Models
+      summary: Train Model
+      operationId: train_model_train_model_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FLModel'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Train Model Train Model Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /models:
+    get:
+      tags:
+      - Models
+      summary: Get All Models
+      operationId: get_all_models_models_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /models/{id}:
+    get:
+      tags:
+      - Models
+      summary: Get State
+      operationId: get_state_models__id__get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Get State Models  Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Agent:
+      properties:
+        id:
+          type: string
+          title: Id
+        host:
+          type: string
+          title: Host
+        rest_port:
+          type: string
+          title: Rest Port
+        fl_port:
+          type: string
+          title: Fl Port
+      type: object
+      required:
+      - id
+      - host
+      - rest_port
+      - fl_port
+      title: Agent
+    FLModel:
+      properties:
+        name:
+          type: string
+          title: Name
+        type:
+          $ref: '#/components/schemas/ModelType'
+        param:
+          type: string
+          title: Param
+        minimumAgents:
+          type: integer
+          title: Minimumagents
+      type: object
+      required:
+      - name
+      - type
+      - param
+      - minimumAgents
+      title: FLModel
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ModelType:
+      type: string
+      enum:
+      - DPLSTM
+      - FF
+      title: ModelType
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
